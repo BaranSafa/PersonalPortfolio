@@ -1,7 +1,6 @@
 import CodeWindow from "./CodeWindow";
 import TitleBar from "./TitleBar";
 import SkillsRadar from "./SkillsRadar";
-import ParticlesBackground from "./ParticlesBackground";
 import StatCard from "./StatCard";
 import ChatBot from "./ChatBot";
 import { useTypewriter } from "./useTypeWriter";
@@ -80,8 +79,6 @@ function App()
       
       <div className="blob blob-1"></div>
       <div className="blob blob-2"></div>
-
-      <ParticlesBackground />
 
       {/* SIDEBAR */}
       <nav className="glass-sidebar">
