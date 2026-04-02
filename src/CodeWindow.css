@@ -37,7 +37,15 @@
   color: #94a3b8;
   font-size: 0.8rem;
   font-weight: 500;
-  margin-right: 40px;
+}
+.window-lang {
+  background: rgba(56,189,248,0.12);
+  color: var(--accent);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 6px;
+  letter-spacing: 0.5px;
 }
 
 .code-content {
@@ -47,12 +55,15 @@
   color: #e2e8f0;
 }
 
-.keyword { color: #c678dd; }      
-.class-name { color: #e5c07b; }   
+.keyword      { color: #c678dd; font-style: italic; }
+.class-name   { color: #e5c07b; }
 .parent-class { color: #e5c07b; }
-.function { color: #61afef; }     
-.self { color: #e06c75; }         
-.string { color: #98c379; }     
+.function     { color: #61afef; }
+.self         { color: #e06c75; }
+.string       { color: #98c379; }
+.comment      { color: #5c6370; font-style: italic; }
+.operator     { color: #56b6c2; }
+.boolean      { color: #d19a66; }
 
 .indent-1 { padding-left: 20px; }
 .indent-2 { padding-left: 40px; }
