@@ -21,7 +21,6 @@ import "./App.css";
 function App() {
   const [activeTab, setActiveTab] = useState("home");
   const [selectedProject, setSelectedProject] = useState(null);
-  const [projectFilter, setProjectFilter] = useState("all");
   const [mousePos, setMousePos] = useState({ x: -200, y: -200 });
 
   const typeWriterText = useTypewriter([
@@ -126,9 +125,6 @@ function App() {
       link: "https://github.com/BaranSafa/PersonalPortfolio",
     },
   ];
-
-  const filteredProjects =
-    projectFilter === "all" ? projects : projects.filter((p) => p.category === projectFilter);
 
   const pageVariants = {
     initial: { opacity: 0, y: 24 },
@@ -337,21 +333,9 @@ function App() {
                     Selected <span className="gradient-text">Works</span>
                   </h2>
 
-                  <div className="filter-bar">
-                    {["all", "AI & ML", "Web Dev"].map((f) => (
-                      <button
-                        key={f}
-                        className={`filter-btn ${projectFilter === f ? "active" : ""}`}
-                        onClick={() => setProjectFilter(f)}
-                      >
-                        {f === "all" ? "All Projects" : f}
-                      </button>
-                    ))}
-                  </div>
-
                   <motion.div className="projects-grid" layout>
                     <AnimatePresence>
-                      {filteredProjects.map((p) => (
+                      {projects.map((p) => (
                         <motion.div
                           key={p.id}
                           layout
