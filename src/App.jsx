@@ -4,7 +4,7 @@ import {
   FaHome, FaUser, FaCode, FaEnvelope, FaGithub, FaLinkedin,
   FaExternalLinkAlt, FaMapMarkerAlt, FaPhone, FaBrain,
   FaDatabase, FaStar, FaChevronDown, FaArrowRight,
-  FaGraduationCap, FaBriefcase
+  FaGraduationCap, FaBriefcase, FaBook, FaClock, FaTag
 } from "react-icons/fa";
 import {
   SiPython, SiReact, SiJavascript, SiHtml5,
@@ -15,12 +15,74 @@ import TitleBar from "./TitleBar";
 import SkillsRadar from "./SkillsRadar";
 import StatCard from "./StatCard";
 import ChatBot from "./ChatBot";
+import IntroAnimation from "./IntroAnimation";
+import GitHubContributions from "./GitHubContributions";
 import { useTypewriter } from "./useTypeWriter";
 import "./App.css";
 
+const blogPosts = [
+  {
+    id: 1,
+    title: "Stock Price Prediction with LSTM Networks",
+    date: "Dec 15, 2024",
+    readTime: "5 min read",
+    tags: ["Python", "LSTM", "Deep Learning"],
+    summary: "How I built Fin-TAP — a time-series forecasting system that predicts stock prices using LSTM networks and historical market data.",
+    content: [
+      { type: "p", text: "Predicting stock prices is one of the classic challenges in financial machine learning. When I started working on Fin-TAP, my goal was simple: build a system that could look at historical price data and give a reasonable short-term forecast." },
+      { type: "h3", text: "Why LSTM?" },
+      { type: "p", text: "Traditional models like ARIMA assume linear relationships in time-series data. Stock prices are anything but linear — they're noisy, non-stationary, and influenced by external factors. LSTM (Long Short-Term Memory) networks handle this naturally because they maintain a 'memory' of past states through their gating mechanism." },
+      { type: "h3", text: "Architecture" },
+      { type: "p", text: "The model takes a 60-day sliding window of closing prices as input. I stacked two LSTM layers (128 units each) with dropout regularization, followed by a dense output layer. The key insight was normalizing data per-stock using MinMaxScaler rather than globally — this prevented the model from treating a $5 stock the same as a $500 one." },
+      { type: "h3", text: "Results & Lessons" },
+      { type: "p", text: "On the test set, the model achieved a RMSE of around 2–4% for established stocks like AAPL. Volatile small-caps were harder to predict, as expected. The biggest lesson: feature engineering matters more than model complexity. Adding RSI and MACD indicators improved accuracy more than doubling the LSTM depth." },
+    ],
+  },
+  {
+    id: 2,
+    title: "Brain Tumor Detection: CNN vs Transfer Learning",
+    date: "Feb 20, 2025",
+    readTime: "6 min read",
+    tags: ["Python", "CNN", "Keras", "Medical AI"],
+    summary: "Building a MRI brain tumor classifier — why I chose the Xception architecture over training a CNN from scratch, and what the results revealed.",
+    content: [
+      { type: "p", text: "Medical image classification is one of the most impactful applications of deep learning. In this project, I tackled the problem of classifying brain MRI scans into four categories: glioma, meningioma, pituitary tumor, and no tumor." },
+      { type: "h3", text: "The Data Challenge" },
+      { type: "p", text: "The dataset contained around 7,000 MRI images. While that sounds large, it's tiny by deep learning standards. Training a CNN from scratch with this little data leads to overfitting almost immediately — validation accuracy would plateau at ~70% while training accuracy hit 99%." },
+      { type: "h3", text: "Why Xception?" },
+      { type: "p", text: "Xception is a depthwise separable convolution network pre-trained on ImageNet. Despite being trained on natural photos (not MRIs), the low-level feature detectors — edges, textures, gradients — transfer surprisingly well to medical imaging. I froze the base model's weights and only trained the classification head on my data." },
+      { type: "h3", text: "Training Strategy" },
+      { type: "p", text: "After the initial head training converged, I unfroze the top 20% of the base model layers for fine-tuning with a very low learning rate (1e-5). This two-phase approach is standard transfer learning practice. Data augmentation (rotations, flips, zoom) was critical since MRI scans come in varied orientations." },
+      { type: "h3", text: "Final Accuracy" },
+      { type: "p", text: "The fine-tuned Xception model achieved 95.8% test accuracy across all four classes, with glioma being the hardest to distinguish from meningioma. This highlights a broader truth: even with limited data, transfer learning from a strong pretrained model dramatically outperforms training from scratch." },
+    ],
+  },
+  {
+    id: 3,
+    title: "Building Desktop Apps with React + Tauri",
+    date: "Mar 28, 2025",
+    readTime: "4 min read",
+    tags: ["React", "Tauri", "Rust", "Desktop"],
+    summary: "Why I chose Tauri over Electron for my portfolio app, how the setup works, and what I'd do differently next time.",
+    content: [
+      { type: "p", text: "When I decided to build my portfolio as a desktop application (not just a website), I had two main options: Electron and Tauri. I chose Tauri — here's why, and what I learned." },
+      { type: "h3", text: "Electron vs Tauri" },
+      { type: "p", text: "Electron bundles an entire Chromium browser and Node.js runtime into every app. A minimal Electron app is 80–150MB. Tauri uses the OS's native WebView (Edge on Windows, WebKit on macOS/Linux) and a small Rust backend. My portfolio build is under 5MB — a 30x size difference." },
+      { type: "h3", text: "The Rust Backend" },
+      { type: "p", text: "Tauri's backend is written in Rust, which communicates with the React frontend via a message-passing API. For a simple portfolio, I barely needed the backend at all — just window management (decorations: false for the custom titlebar, transparent background). But knowing I could add native OS capabilities later is reassuring." },
+      { type: "h3", text: "Custom Titlebar" },
+      { type: "p", text: "Since I disabled the native window decorations, I had to build my own titlebar with minimize/maximize/close buttons. Tauri exposes window control commands as JS/TS APIs. The tricky part was the drag region — Tauri uses a `data-tauri-drag-region` attribute to mark draggable elements, which is clean to implement." },
+      { type: "h3", text: "What I'd Do Differently" },
+      { type: "p", text: "I'd set up the Tauri CLI configuration earlier in development. I spent time adjusting Vite's build settings to work with Tauri's asset loading. Also: test on macOS earlier — the WebKit renderer handles some CSS (especially backdrop-filter) differently than Chromium on Windows." },
+    ],
+  },
+];
+
 function App() {
+  const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem("introSeen"));
   const [activeTab, setActiveTab] = useState("home");
   const [selectedProject, setSelectedProject] = useState(null);
+  const [activeBlogPost, setActiveBlogPost] = useState(null);
   const [mousePos, setMousePos] = useState({ x: -200, y: -200 });
 
   const typeWriterText = useTypewriter([
@@ -138,10 +200,14 @@ function App() {
     { id: "skills",   icon: <FaCode />,        label: "Skills"   },
     { id: "projects", icon: <FaBriefcase />,   label: "Projects" },
     { id: "about",    icon: <FaUser />,        label: "About"    },
+    { id: "blog",     icon: <FaBook />,        label: "Blog"     },
     { id: "contact",  icon: <FaEnvelope />,    label: "Contact"  },
   ];
 
-  const handleNav = (id) => { setActiveTab(id); setSelectedProject(null); };
+  const handleNav = (id) => { setActiveTab(id); setSelectedProject(null); setActiveBlogPost(null); };
+  const handleIntroComplete = () => { sessionStorage.setItem("introSeen", "1"); setShowIntro(false); };
+
+  if (showIntro) return <IntroAnimation onComplete={handleIntroComplete} />;
 
   return (
     <div className="main-container">
@@ -489,6 +555,11 @@ function App() {
                 </div>
               </div>
 
+              <div className="glass-card github-card">
+                <h3 className="timeline-heading"><FaGithub /> GitHub Contributions</h3>
+                <GitHubContributions username="BaranSafa" />
+              </div>
+
               <div className="glass-card timeline-card">
                 <div className="timeline-section">
                   <h3 className="timeline-heading">
@@ -523,6 +594,81 @@ function App() {
                   </div>
                 </div>
               </div>
+            </motion.div>
+          )}
+
+          {/* BLOG */}
+          {activeTab === "blog" && (
+            <motion.div
+              key="blog"
+              initial="initial" animate="in" exit="out"
+              variants={pageVariants} transition={pageTransition}
+              className="page-content"
+            >
+              {!activeBlogPost ? (
+                <>
+                  <h2 className="page-title">
+                    Tech <span className="gradient-text">Blog</span>
+                  </h2>
+                  <p className="page-subtitle">
+                    Notes on AI, deep learning, and web development from my projects.
+                  </p>
+                  <div className="blog-list">
+                    {blogPosts.map((post, i) => (
+                      <motion.div
+                        key={post.id}
+                        className="blog-card glass-card"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: i * 0.08 }}
+                        onClick={() => setActiveBlogPost(post)}
+                      >
+                        <div className="blog-card-meta">
+                          <span className="blog-date"><FaClock /> {post.date}</span>
+                          <span className="blog-read">{post.readTime}</span>
+                        </div>
+                        <h3 className="blog-card-title">{post.title}</h3>
+                        <p className="blog-card-summary">{post.summary}</p>
+                        <div className="blog-tags">
+                          {post.tags.map(t => (
+                            <span key={t} className="blog-tag"><FaTag /> {t}</span>
+                          ))}
+                        </div>
+                        <div className="blog-card-footer">
+                          <span className="view-details">Read Article <FaArrowRight /></span>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="blog-post-view"
+                >
+                  <button className="back-link" onClick={() => setActiveBlogPost(null)}>
+                    ← Back to Blog
+                  </button>
+                  <div className="blog-post-meta">
+                    <span className="blog-date"><FaClock /> {activeBlogPost.date}</span>
+                    <span className="blog-read">{activeBlogPost.readTime}</span>
+                  </div>
+                  <h1 className="blog-post-title">{activeBlogPost.title}</h1>
+                  <div className="blog-tags" style={{ marginBottom: "32px" }}>
+                    {activeBlogPost.tags.map(t => (
+                      <span key={t} className="blog-tag"><FaTag /> {t}</span>
+                    ))}
+                  </div>
+                  <div className="blog-post-body glass-card">
+                    {activeBlogPost.content.map((block, i) =>
+                      block.type === "h3"
+                        ? <h3 key={i} className="blog-body-h3">{block.text}</h3>
+                        : <p key={i} className="blog-body-p">{block.text}</p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
             </motion.div>
           )}
 

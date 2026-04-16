@@ -1,0 +1,90 @@
+.contrib-wrapper {
+  margin-top: 4px;
+}
+
+.contrib-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.contrib-count {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.contrib-legend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.contrib-legend span {
+  font-size: 0.7rem;
+  color: var(--text-secondary);
+}
+
+.contrib-legend-box {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.contrib-scroll {
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(47,47,228,0.2) transparent;
+  padding-bottom: 4px;
+}
+
+.contrib-months {
+  display: grid;
+  grid-auto-columns: 13px;
+  grid-auto-flow: column;
+  gap: 3px;
+  margin-bottom: 4px;
+  padding-left: 0;
+}
+
+.contrib-months span {
+  font-size: 0.65rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.contrib-grid {
+  display: flex;
+  gap: 3px;
+}
+
+.contrib-week {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.contrib-day {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  cursor: default;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  flex-shrink: 0;
+}
+
+.contrib-day:hover {
+  transform: scale(1.5);
+  box-shadow: 0 0 6px rgba(47,47,228,0.7);
+  position: relative;
+  z-index: 1;
+}
+
+.contrib-status {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  padding: 12px 0;
+}
