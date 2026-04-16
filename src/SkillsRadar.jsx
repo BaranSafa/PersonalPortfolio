@@ -56,6 +56,8 @@ const SkillsRadar = () => (
           fill="#2F2FE4"
           fillOpacity={0.2}
           dot={{ fill: '#2F2FE4', r: 4 }}
+          animationDuration={450}
+          animationEasing="ease-out"
         />
         <Tooltip content={<CustomTooltip />} />
       </RadarChart>
