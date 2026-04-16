@@ -78,6 +78,26 @@ const blogPosts = [
   },
 ];
 
+function AnimatedPercent({ value, delay = 0 }) {
+  const [count, setCount] = useState(0);
+  useEffect(() => {
+    let raf;
+    const t = setTimeout(() => {
+      const start = performance.now();
+      const duration = 700;
+      const tick = (now) => {
+        const progress = Math.min((now - start) / duration, 1);
+        const ease = 1 - Math.pow(1 - progress, 3);
+        setCount(Math.round(ease * value));
+        if (progress < 1) raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+    }, delay * 1000);
+    return () => { clearTimeout(t); cancelAnimationFrame(raf); };
+  }, [value, delay]);
+  return <>{count}%</>;
+}
+
 function App() {
   const [showIntro, setShowIntro] = useState(() => !sessionStorage.getItem("introSeen"));
   const [activeTab, setActiveTab] = useState("home");
@@ -189,11 +209,11 @@ function App() {
   ];
 
   const pageVariants = {
-    initial: { opacity: 0, y: 24 },
-    in:      { opacity: 1, y: 0  },
-    out:     { opacity: 0, y: -24 },
+    initial: { opacity: 0, y: 18, x: 22 },
+    in:      { opacity: 1, y: 0,  x: 0  },
+    out:     { opacity: 0, y: -10, x: -22 },
   };
-  const pageTransition = { type: "tween", ease: "anticipate", duration: 0.4 };
+  const pageTransition = { type: "tween", ease: [0.25, 0.46, 0.45, 0.94], duration: 0.38 };
 
   const navItems = [
     { id: "home",     icon: <FaHome />,       label: "Home"     },
@@ -312,6 +332,14 @@ function App() {
                 </button>
               </div>
 
+              <div className="terminal-line">
+                <span className="terminal-prompt">›</span>
+                <span className="terminal-key">currently_working_on</span>
+                <span className="terminal-eq">:</span>
+                <span className="terminal-val">"Graduation Project"</span>
+                <span className="terminal-cursor">_</span>
+              </div>
+
               <div className="scroll-indicator">
                 <FaChevronDown />
               </div>
@@ -355,7 +383,9 @@ function App() {
                               {skill.icon}
                             </span>
                             <span className="skill-name">{skill.name}</span>
-                            <span className="skill-percent">{skill.level}%</span>
+                            <span className="skill-percent">
+                              <AnimatedPercent value={skill.level} delay={ci * 0.1 + si * 0.06 + 0.3} />
+                            </span>
                           </div>
                           <div className="skill-bar">
                             <motion.div
@@ -401,7 +431,7 @@ function App() {
 
                   <motion.div className="projects-grid" layout>
                     <AnimatePresence>
-                      {projects.map((p) => (
+                      {projects.map((p, idx) => (
                         <motion.div
                           key={p.id}
                           layout
@@ -422,6 +452,9 @@ function App() {
                               style={{ background: p.gradient }}
                             />
                             <span className="card-category">{p.category}</span>
+                            <span className="card-number">
+                              {String(idx + 1).padStart(2, "0")}
+                            </span>
                           </div>
                           <div className="card-content">
                             <h3>{p.title}</h3>

@@ -187,9 +187,21 @@ body.tauri .content-area  { margin-top: 32px; height: calc(100vh - 32px); }
   color: var(--text-primary);
 }
 .nav-menu li.active {
-  background: var(--primary-gradient);
+  background: rgba(47, 47, 228, 0.13);
   color: #fff;
-  box-shadow: 0 4px 18px rgba(47,47,228,0.4);
+  box-shadow: none;
+}
+.nav-menu li.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 56%;
+  border-radius: 0 3px 3px 0;
+  background: #2F2FE4;
+  box-shadow: 0 0 10px rgba(47, 47, 228, 0.9);
 }
 .nav-icon { font-size: 1rem; flex-shrink: 0; }
 
@@ -255,8 +267,26 @@ body.tauri .content-area  { margin-top: 32px; height: calc(100vh - 32px); }
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   transition: border-color var(--transition);
+  position: relative;
+  overflow: hidden;
 }
 .glass-card:hover { border-color: var(--glass-border-hover); }
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    108deg,
+    transparent 38%,
+    rgba(255, 255, 255, 0.045) 50%,
+    transparent 62%
+  );
+  transform: translateX(-100%);
+  transition: transform 0.65s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.glass-card:hover::before { transform: translateX(100%); }
 
 /* ────────────────────────────── HOME ────────────────────────────── */
 .home-layout {
@@ -382,6 +412,25 @@ body.tauri .content-area  { margin-top: 32px; height: calc(100vh - 32px); }
   border-color: var(--accent);
   transform: translateY(-2px);
 }
+
+/* ── TERMINAL LINE ── */
+.terminal-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  background: rgba(22, 46, 147, 0.1);
+  border: 1px solid rgba(47, 47, 228, 0.2);
+  padding: 7px 16px;
+  border-radius: 8px;
+  margin-top: 6px;
+}
+.terminal-prompt { color: #2F2FE4; font-weight: 700; font-size: 1rem; }
+.terminal-key    { color: var(--text-secondary); }
+.terminal-eq     { color: var(--text-secondary); }
+.terminal-val    { color: #34d399; }
+.terminal-cursor { color: #2F2FE4; animation: blink 1s infinite; }
 
 .scroll-indicator {
   margin-top: 40px;
@@ -518,6 +567,21 @@ body.tauri .content-area  { margin-top: 32px; height: calc(100vh - 32px); }
   transition: opacity var(--transition);
 }
 .project-card:hover .card-overlay { opacity: 0.45; }
+
+.card-number {
+  position: absolute;
+  bottom: 6px;
+  right: 12px;
+  font-size: 3.8rem;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  color: rgba(255, 255, 255, 0.1);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  transition: color var(--transition);
+}
+.project-card:hover .card-number { color: rgba(255, 255, 255, 0.18); }
 
 .card-category {
   position: absolute;
